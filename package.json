@@ -30,7 +30,8 @@
     "marked-terminal": "^7.0.0",
     "node-notifier": "^10.0.1",
     "ora": "^8.0.1",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/blessed": "^0.1.25",

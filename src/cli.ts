@@ -1,53 +1,34 @@
 #! /usr/bin/env node
 
 import { select } from '@inquirer/prompts';
+import chalk from 'chalk';
 import { program } from 'commander';
 import figlet from 'figlet';
-import db from './configs/db.config.js';
-import { login, resetAuth } from './service/auth.js';
-import { infraAction } from './service/infra.js';
-import { palragoServerCheck } from './service/palrago-check.js';
-import { queryAction } from './service/query.js';
-import { Table } from './types/table.type.js';
+import { join } from 'path';
+import XLSX from 'xlsx';
+import { __dirname } from './utils/path.util.js';
 
-console.log(figlet.textSync('LEE IN SEOK CLI'));
+console.log(chalk.yellow(figlet.textSync('YOON GA HYUN CLI')));
 
 program
   .version('1.0.0')
-  .description('이인석 CLI')
+  .description('실적 엑셀 통계 CLI')
   .action(async () => {
-    if (await login()) {
-      const answer = await select({
-        message: '선택해주세요!',
-        choices: Object.keys(db.data)
-          .filter((table) => table !== 'auth')
-          .map((table) => ({
-            name: table,
-            value: table,
-          })),
-      });
+    const answer = await select({
+      message: '무엇을 도와드릴까요?',
+      choices: [
+        {
+          name: '실적 엑셀 통계 생성',
+          value: 'stat',
+        },
+      ],
+    });
 
-      switch (answer) {
-        case Table.INFRA:
-          await infraAction();
-          break;
-        case Table.QUERY:
-          await queryAction();
-          break;
-      }
-    } else {
-      process.exit(1);
+    switch (answer) {
+      case 'stat':
+        console.log(XLSX.readFile(join(__dirname, '../../', 'storage/files/copy/sample.xlsm')));
+        break;
     }
   });
-
-program
-  .command('reset')
-  .requiredOption('-i, --id <id>', 'ID')
-  .requiredOption('-p, --pw <pw>', 'PW')
-  .action((options) => {
-    resetAuth(options.id, options.pw);
-  });
-
-program.command('palrago check').action(() => palragoServerCheck());
 
 program.parse(process.argv);
